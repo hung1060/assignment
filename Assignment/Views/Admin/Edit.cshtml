@@ -1,0 +1,147 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = null;
+}
+@using Assignment.Models
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            margin-top: 100px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .product {
+            display: flex;
+        }
+
+        .product-image {
+            flex: 1;
+            padding: 10px;
+        }
+
+            .product-image img {
+                max-width: 100%;
+                height: auto;
+            }
+
+        .product-details {
+            flex: 2;
+            padding: 10px;
+        }
+
+        .product-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .product-description {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .product-price {
+            font-size: 20px;
+            color: #f00;
+        }
+
+        .product-actions {
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .btn:hover {
+                background-color: #0056b3;
+            }
+    td{
+        padding: 20px;
+    }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    @{
+        Product p = ViewBag.product;
+    }
+    <div class="container">
+        <div class="product">
+            <div class="product-image">
+                <img src="https://atpsoftware.vn/wp-content/uploads//2019/06/depositphotos_58810529-stock-illustration-product-concept.jpg" alt="Product Image">
+                <a href="/Admin/ViewProducts"><i class="fa fa-arrow-left" style="margin-top: 100px; font-size: 40px"></i></a>
+            </div>
+            <form action="/Admin/DoEdit">
+                <div class="product-details">
+                    <input type="hidden" name="p.ProductId" value="@p.ProductId" />
+                    <table>
+                        <tr>
+                            <td>Product name</td>
+                            <td><input type="text" value="@p.ProductName" name="p.ProductName" /></td>
+                        </tr>
+                        <tr>
+                            <td>Supplier</td>
+                            <td>
+                                <select name="p.SupplierId">
+                                    @foreach (Supplier s in ViewBag.suppliers)
+                                    {
+                                        <option value="@s.SupplierId" @((s.SupplierId==p.SupplierId)?"selected":"")>@s.CompanyName</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Category</td>
+                            <td>
+                                <select name="p.CategoryId">
+                                    @foreach (Category c in ViewBag.categories)
+                                    {
+                                        <option value="@c.CategoryId" @((c.CategoryId == p.CategoryId) ? "selected" : "")>@c.CategoryName</option>
+                                    }
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Quantity per unit</td>
+                            <td><input type="text" name="p.QuantityPerUnit" /></td>
+                        </tr>
+                        <tr>
+                            <td>Unit price</td>
+                            <td><input type="text" name="p.UnitPrice" /></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><input type="submit" value="Update" /></td>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,171 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: "Lato", sans-serif;
+        }
+
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+            .sidenav a {
+                padding: 8px 8px 8px 32px;
+                text-decoration: none;
+                font-size: 25px;
+                color: #818181;
+                display: block;
+                transition: 0.3s;
+            }
+
+                .sidenav a:hover {
+                    color: #f1f1f1;
+                }
+
+            .sidenav .closebtn {
+                position: absolute;
+                top: 0;
+                right: 25px;
+                font-size: 36px;
+                margin-left: 50px;
+            }
+
+        #main {
+            transition: margin-left .5s;
+        }
+
+        .trans {
+            margin-top: 10px;
+            background-color: #624bff;
+            height: 150px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .item {
+            margin-top: 50px;
+            height: 170px;
+            border-radius: 5px;
+            background-color: white;
+            width: 400px;
+            box-shadow: 0 2px 4px rgba(0,0,20,.08), 0 1px 2px rgba(0,0,20,.08);
+        }
+
+        .head, .body {
+            margin-left: 20px;
+        }
+
+        #myChart {
+            margin-top: 100px !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="mySidenav" class="sidenav">
+        <a href="/Admin/ViewProducts">Product Management</a>
+        <a href="/Admin/Tracking">Tracking</a>
+        <a href="/Home/Logout">Logout</a>
+    </div>
+    <div id="main">
+        <div class="header">
+            <span style="font-size:30px;cursor:pointer;" id="navbut" onclick="openNav()">&#9776;</span>
+        </div>
+        <div class="trans">
+            <div class="item">
+                <div class="head">
+                    <h2>Orders</h2>
+                </div>
+                <div class="body">
+                    <h1>@ViewBag.quanOrder</h1>
+                    <h3 style="font-weight: normal">@ViewBag.quanOrderComplete completes</h3>
+                </div>
+            </div>
+            <div class="item">
+                <div class="head">
+                    <h2>Products</h2>
+                </div>
+                <div class="body">
+                    <h1>@ViewBag.quanProduct</h1>
+                </div>
+            </div>
+            <div class="item">
+                <div class="head">
+                    <h2>Suppliers</h2>
+                </div>
+                <div class="body">
+                    <h1>@ViewBag.quanSupplier</h1>
+                </div>
+            </div>
+        </div>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script>
+        var i = 0;
+        function openNav() {
+            if (i % 2 == 0) {
+                document.getElementById("mySidenav").style.width = "250px";
+                document.getElementById("main").style.marginLeft = "250px";
+                i++;
+            } else {
+                document.getElementById("mySidenav").style.width = "0";
+                document.getElementById("main").style.marginLeft = "0";
+                i++;
+            }
+        }
+        var ctx = document.getElementById('myChart').getContext('2d');
+        @{
+            var data = ViewBag.data;
+            var jsonData = System.Text.Json.JsonSerializer.Serialize(data);
+        }
+        var data = @Html.Raw(jsonData);
+        var labelset = [];
+        var dataset = [];
+        for (var i = 0; i < data.length; i++) {
+            labelset.push(data[i].ProductId);
+            dataset.push(data[i].SumQuan);
+        }
+        var myChart = new Chart(ctx, {
+            type: 'bar', // Loại biểu đồ (bar, line, pie, etc.)
+            data: {
+                labels: labelset,
+                datasets: [{
+                    label: 'Sales Statistics by Product',
+                    data: dataset, // Dữ liệu thống kê
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)', // Màu nền
+                    borderColor: 'rgba(75, 192, 192, 1)', // Màu đường viền
+                    borderWidth: 1 // Độ dày đường viền
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
+

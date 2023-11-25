@@ -1,0 +1,251 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = null;
+}
+@using Assignment.Models
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Cart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background: #ddd;
+            text-align: center;
+        }
+
+        .title {
+            margin-bottom: 5vh;
+        }
+
+        .card {
+            margin: 0 auto;
+            margin-top: 100px;
+            width: 800px;
+            box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            border-radius: 1rem;
+            border: transparent;
+        }
+
+        .cart {
+            background-color: #fff;
+            padding: 4vh 5vh;
+            border-bottom-left-radius: 1rem;
+            border-top-left-radius: 1rem;
+        }
+
+        .summary {
+            background-color: #ddd;
+            border-top-right-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+            padding: 4vh;
+            color: rgb(65, 65, 65);
+        }
+
+            .summary .col-2 {
+                padding: 0;
+            }
+
+            .summary .col-10 {
+                padding: 0;
+            }
+
+        .row {
+            margin: 0;
+        }
+
+        .title b {
+            font-size: 1.5rem;
+        }
+
+        .main {
+            margin: 0;
+            padding: 2vh 0;
+            width: 100%;
+        }
+
+        .col-2, .col {
+            padding: 0 1vh;
+        }
+
+        a {
+            padding: 0 1vh;
+        }
+
+        .close {
+            margin-left: auto;
+            font-size: 0.7rem;
+        }
+
+        img {
+            width: 3.5rem;
+        }
+
+        .back-to-shop {
+            margin-top: 4.5rem;
+        }
+
+        h5 {
+            margin-top: 4vh;
+        }
+
+        hr {
+            margin-top: 1.25rem;
+        }
+
+        form {
+            padding: 2vh 0;
+        }
+
+        select {
+            border: 1px solid rgba(0, 0, 0, 0.137);
+            padding: 1.5vh 1vh;
+            margin-bottom: 4vh;
+            outline: none;
+            width: 100%;
+            background-color: rgb(247, 247, 247);
+        }
+
+        input {
+            border: 1px solid rgba(0, 0, 0, 0.137);
+            padding: 1vh;
+            margin-bottom: 4vh;
+            outline: none;
+            width: 100%;
+            background-color: rgb(247, 247, 247);
+        }
+
+            input:focus::-webkit-input-placeholder {
+                color: transparent;
+            }
+
+        .btn {
+            background-color: #000;
+            border-color: #000;
+            color: white;
+            width: 100%;
+            font-size: 0.7rem;
+            margin-top: 4vh;
+            padding: 1vh;
+            border-radius: 0;
+        }
+
+            .btn:focus {
+                box-shadow: none;
+                outline: none;
+                box-shadow: none;
+                color: white;
+                -webkit-box-shadow: none;
+                -webkit-user-select: none;
+                transition: none;
+            }
+
+            .btn:hover {
+                color: white;
+            }
+
+        a {
+            color: black;
+        }
+
+            a:hover {
+                color: black;
+                text-decoration: none;
+            }
+
+        #code {
+            background-image: linear-gradient(to left, rgba(255, 255, 255, 0.253), rgba(255, 255, 255, 0.185)), url("https://img.icons8.com/small/16/000000/long-arrow-right.png");
+            background-repeat: no-repeat;
+            background-position-x: 95%;
+            background-position-y: center;
+        }
+
+        table, th, td {
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    @{
+        NorthwindContext context = new NorthwindContext();
+    }
+    <div class="card">
+        <div class="row">
+            <div class="cart">
+                <div class="title">
+                    <div class="row">
+                        <div class=""><h4><b>Tracking</b></h4></div>
+                    </div>
+                </div>
+                <div style="height: 300px; overflow: auto">
+                    <table style="width: 700px; border: 1px solid;">
+                        <tr>
+                            <th>OrderId</th>
+                            <th>List Products</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                        </tr>
+                        @foreach (Order o in ViewBag.order)
+                        {
+                            <tr>
+                                <td>@o.OrderId</td>
+                                <td>
+                                    <table style="width: 350px;border-top: none; border-bottom: none;">
+                                        @foreach (OrderDetail od in context.OrderDetails.Where(x => x.OrderId == o.OrderId).ToList())
+                                        {
+                                            <tr>
+                                                <td style="float: left; border-top: none; border-bottom: none;">
+                                                    @context.Products.Find(od.ProductId).ProductName
+                                                </td>
+                                                <td style="float: right;border-top: none; border-bottom: none;">
+                                                    @od.Quantity
+                                                </td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </td>
+                                <td>@switch(o.Status)
+                                    {
+                                        case 1:
+                                            <h7>Order is completed</h7>
+                                            break;
+                                        case 2:
+                                            <h7>Order is processing</h7>
+                                            break;
+                                        case 3:
+                                            <h7>Order is being delivered to you</h7>
+                                            <a href="/Cart/Confirm?id=@o.OrderId"><button>Confirm receiving</button></a>
+                                            break;
+                                        case 4:
+                                            <h7>Order is canceled</h7>
+                                            break;
+                                        case 5:
+                                            <h7>Canceling order is processing</h7>
+                                            break;
+                                    }
+                                </td>
+                                <td><button onclick="window.location.href='/Cart/Cancel?id=@o.OrderId'" @((o.Status == 1 || o.Status == 2) ? "" : "disabled")><i class="fa fa-trash"></i></button></td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+                <a href="/Product/List"><div class="back-to-shop">&leftarrow;<span class="text-muted"> Back to shop</span></a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

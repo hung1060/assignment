@@ -1,0 +1,230 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = null;
+}
+@inject IHttpContextAccessor Accessor
+@using Assignment.Models
+@model X.PagedList.IPagedList<Assignment.Models.Product>
+@using X.PagedList.Mvc.Core
+@using Newtonsoft.Json
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>List Product</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            background-color: #f1f3f7;
+        }
+
+        .card {
+            margin-bottom: 24px;
+            -webkit-box-shadow: 0 2px 3px #e4e8f0;
+            box-shadow: 0 2px 3px #e4e8f0;
+        }
+
+        .card {
+            position: relative;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid #eff0f2;
+            border-radius: 1rem;
+        }
+
+        .font-size-18 {
+            font-size: 18px !important;
+        }
+
+        a {
+            text-decoration: none !important;
+        }
+
+        .text-muted {
+            --bs-text-opacity: 1;
+            color: #7f838b !important;
+        }
+
+        .font-size-20 {
+            font-size: 20px !important;
+        }
+
+        .font-size-15 {
+            font-size: 15px !important;
+        }
+        img{
+            height: 80px !important;
+        }
+
+        .pagination {
+            display: flex;
+        }
+
+            .pagination li {
+                color: black;
+                float: left;
+                padding: 8px 16px;
+                text-decoration: none;
+                border: 1px solid #ddd;
+            }
+
+                .pagination li.active {
+                    background-color: #4CAF50;
+                    color: white;
+                    border: 1px solid #4CAF50;
+                    padding: 8px 16px;
+                    border: 1px solid #ddd;
+                }
+
+                .pagination li:hover:not(.active) {
+                    background-color: #ddd;
+                }
+
+                .pagination li:first-child {
+                    border-top-left-radius: 5px;
+                    border-bottom-left-radius: 5px;
+                }
+
+                .pagination li:last-child {
+                    border-top-right-radius: 5px;
+                    border-bottom-right-radius: 5px;
+                }
+
+        .topnav {
+            overflow: hidden;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            margin-bottom: 15px;
+        }
+
+            .topnav a {
+                float: left;
+                color: black;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+                font-size: 17px;
+            }
+
+                .topnav a:hover {
+                    background-color: #ddd;
+                    color: black;
+                }
+
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <div class="topnav">
+        <a href="/Product/List" style="margin-left:100px;"><h7 style="font-weight: bold">Home</h7></a>
+        <a href="/Home/Logout" style="float: right; margin-right: 100px">
+            <i class="fa fa-sign-out" style="font-size:23px"> Sign out</i>
+        </a>
+        <a href="/Cart/ViewCart" style="float: right">
+            <i class="fa fa-shopping-cart" style="font-size:23px"> My cart</i>
+        </a>
+        <a href="/Cart/Tracking" style="float: right">
+            <i class="fa fa-truck" style="font-size:23px"> Tracking</i>
+        </a>
+    </div>
+    <div class="container">
+        <div class="filter">
+            <form action="/Product/Filter" id="forms">
+                <select onchange="document.getElementById('forms').submit();" name="categoryid" style="border-radius: 5px; margin-bottom: 10px; height: 30px;">
+                    <option value="0">All category</option>
+                    @foreach(Category c in ViewBag.categories)
+                    {
+                        <option value="@c.CategoryId" @(ViewBag.categoryid==c.CategoryId? "selected": "")>
+                            @c.CategoryName
+                         </option>
+                    }
+                </select>
+                <select onchange="document.getElementById('forms').submit();" name="supplierid" style="border-radius: 5px; margin-bottom: 10px; height: 30px;">
+                    <option value="0">All supplier</option>
+                    @foreach (Supplier s in ViewBag.suppliers)
+                    {
+                                <option value="@s.SupplierId" @(ViewBag.supplierid == s.SupplierId ? "selected" : "")>@s.CompanyName</option>
+                    }
+                </select>
+                <select onchange="document.getElementById('forms').submit();" name="flowrange" style="border-radius: 5px; margin-bottom: 10px; height: 30px;">
+                    <option value="0"hidden>Range</option>
+                    <option value="1" @((ViewBag.flowrange == 1)?"selected":"")>Price low to high</option>
+                    <option value="2" @((ViewBag.flowrange == 2) ? "selected" : "")>Price high to low</option>
+                </select>
+            </form>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="table-responsive px-3">
+                                        <table class="table table-striped align-middle table-nowrap">
+                                            <tbody>
+                                                @foreach(Product p in ViewBag.list)
+                                                {
+                                                <tr>
+                                                    <td>
+                                                        <div class="avatar-lg me-4">
+                                                            <img src="https://cdn.tgdd.vn/Files/2022/11/12/1486349/y-nghia-mau-cam-mau-cam-tuong-trung-cho-dieu-gi-202211120623373898.jpg" class="img-fluid rounded" alt>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div>
+                                                            <h5 class="font-size-18">@p.ProductName</h5>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <ul class="list-unstyled ps-0 mb-0">
+                                                            <li><p class="text-muted mb-1 text-truncate"><i class="mdi mdi-circle-medium align-middle text-primary me-1"></i> Supplier: @p.Supplier.CompanyName </p></li>
+                                                            <li><p class="text-muted mb-1 text-truncate"><i class="mdi mdi-circle-medium align-middle text-primary me-1"></i> Category: @p.Category.CategoryName</p></li>
+                                                            <li><p class="text-muted mb-0 text-truncate"><i class="mdi mdi-circle-medium align-middle text-primary me-1"></i> Quantity per unit: @p.QuantityPerUnit</p></li>
+                                                        </ul>
+                                                    </td>
+                                                    <td style="width: 220px;">
+                                                        <h3 class="mb-0 font-size-20"><b>$@Math.Round((decimal)p.UnitPrice,2)</b></h3>
+                                                    </td>
+                                                    <td>
+                                                        <a href="/Cart/Add?id=@p.ProductId">
+                                                            <button type="button" class="btn btn-primary waves-effect waves-light"><i class="bx bx-cart me-2 font-size-15 align-middle"></i> Add</button>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    @Html.PagedListPager(Model, page=>Url.Action("List","Product",new {categoryid = ViewBag.categoryid, supplierid = ViewBag.supplierid, flowrange = ViewBag.flowrange, page = page}))
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">
+
+    </script>
+</body>
+</html>
